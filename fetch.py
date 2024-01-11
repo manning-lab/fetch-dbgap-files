@@ -5,7 +5,7 @@ import sys
 
 class dbGaPFileFetcher:
 
-    def __init__(self, ngc_file, prefetch, cart):
+    def __init__(self, ngc_file, prefetch, output_dir="."):
         """Initialize the dbGaPFileFetcher.
 
         Args:
@@ -14,26 +14,35 @@ class dbGaPFileFetcher:
         """
         self.ngc_file = ngc_file
         self.prefetch = prefetch
-        self.cart = cart
-        # self.manifest = manifest
+        self.output_dir = output_dir
 
-    def download_files(self):
-        """Download files from dbGaP using a kart file.
+    def download_files(self, cart, manifest, n_retries=5):
+        """Download files from dbGaP using a kart file. Because prefetch sometimes fails to download a file
+        but does not report an error, this method will retry downloading the cart a number of times.
 
         Args:
             cart (str): The path to the cart file.
             manifest (str): The path to the manifest file.
-            verbose (bool): Print more information.
+            n_retries (int): The number of times to retry downloading the cart.
         """
+        for i in range(n_retries):
+            print(i)
+            print("Attempt {}/{} to download files.".format(i + 1, n_retries))
+            self._run_prefetch(cart)
+
+    def _run_prefetch(self, cart_file):
+        """Run the prefetch command to download files from dbGaP."""
         cmd = "{prefetch} --ngc {ngc} --order kart --cart {cart}".format(
             prefetch=self.prefetch,
             ngc=self.ngc_file,
-            cart=self.cart,
+            cart=cart_file,
         )
+        if self.output_dir:
+            cmd += " --output-directory {}".format(self.output_dir)
         print(cmd)
 
         returned_value = subprocess.call(cmd, shell=True)
-        sys.exit(returned_value)
+        return returned_value
 
 
 if __name__ == "__main__":
@@ -52,7 +61,7 @@ if __name__ == "__main__":
     # Parse.
     args = parser.parse_args()
 
-    print("hello world!")
-
-    fetcher = dbGaPFileFetcher(args.ngc, args.prefetch, args.cart)
-    fetcher.download_files()
+    # Set up the class.
+    fetcher = dbGaPFileFetcher(args.ngc, args.prefetch, args.outdir)
+    # Download.
+    fetcher.download_files(args.cart, args.manifest)
