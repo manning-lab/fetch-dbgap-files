@@ -1,6 +1,7 @@
 """Script to fetch files from dbGaP using sratoolkit prefetch with a kart file."""
 
 import argparse
+import csv
 import os
 import shutil
 import subprocess
@@ -33,16 +34,33 @@ class dbGaPFileFetcher:
         # Work in a temporary directory to do the downloading.
         cart_file = os.path.abspath(cart)
         original_working_directory = os.getcwd()
+        manifest_files = self._read_manifest(manifest)
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
             # Download the files
-            for i in range(n_retries):
+            all_files_downloaded = False
+            i = 0
+            while not all_files_downloaded:
                 print("Attempt {}/{} to download files.".format(i + 1, n_retries))
                 self._run_prefetch(cart_file)
+                if i == n_retries:
+                    print("Failed to download all files.")
+                    return False
+                all_files_downloaded = self._check_prefetch(temp_dir, manifest_files)
+                i = i + 1
             # Copy files to the output directory
             os.chdir(original_working_directory)
             shutil.copytree(temp_dir, self.output_dir, dirs_exist_ok=True)
+            return True
 
+    def _read_manifest(self, manifest):
+        """Read the manifest file."""
+        files = []
+        with open(manifest) as f:
+            cf = csv.DictReader(f)
+            for row in cf:
+                files.append(row["File Name"])
+        return files
 
     def _run_prefetch(self, cart_file):
         """Run the prefetch command to download files from dbGaP."""
@@ -53,10 +71,14 @@ class dbGaPFileFetcher:
         )
         if self.output_dir:
             cmd += " --output-directory {}".format(self.output_dir)
-        print(cmd)
 
         returned_value = subprocess.call(cmd, shell=True)
         return returned_value
+
+    def _check_prefetch(self, directory, expected_files):
+        """Check that prefetch downloaded all the files in the manifest."""
+        downloaded_files = os.listdir(directory)
+        return set(expected_files) == set(downloaded_files)
 
 
 if __name__ == "__main__":
@@ -78,4 +100,8 @@ if __name__ == "__main__":
     # Set up the class.
     fetcher = dbGaPFileFetcher(args.ngc, args.prefetch, args.outdir)
     # Download.
-    fetcher.download_files(args.cart, args.manifest)
+    files_downloaded = fetcher.download_files(args.cart, args.manifest)
+    if not files_downloaded:
+        sys.exit(1)
+    else:
+        print("Files successfully downloaded.")
