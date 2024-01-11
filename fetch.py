@@ -10,13 +10,15 @@ import tempfile
 
 
 class dbGaPFileFetcher:
+    """Class to fetch files from dbGaP using sratoolkit prefetch with a kart file."""
 
-    def __init__(self, ngc_file, prefetch, output_dir="."):
+    def __init__(self, ngc_file, prefetch, output_dir="dbgap_fetch_output"):
         """Initialize the dbGaPFileFetcher.
 
         Args:
             ngc_file (str): The path to the ngc file containing the project key.
             prefetch (str): The path to the prefetch executable.
+            output_dir (str): The directory where files should be saved. (default: "dbgap_fetch_output"
         """
         self.ngc_file = os.path.abspath(ngc_file)
         self.prefetch = os.path.abspath(prefetch)
@@ -78,7 +80,7 @@ class dbGaPFileFetcher:
     def _check_prefetch(self, directory, expected_files):
         """Check that prefetch downloaded all the files in the manifest."""
         downloaded_files = os.listdir(directory)
-        return set(expected_files) == set(downloaded_files)
+        return set(downloaded_files) == set(expected_files)
 
 
 if __name__ == "__main__":
