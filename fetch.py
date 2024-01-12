@@ -66,7 +66,13 @@ class dbGaPFileFetcher:
 
     def _run_prefetch(self, cart_file):
         """Run the prefetch command to download files from dbGaP."""
-        cmd = "{prefetch} --ngc {ngc} --order kart --cart {cart}".format(
+        cmd = (
+            "{prefetch} "
+            "--ngc {ngc} "
+            "--order kart "
+            "--cart {cart} "
+            "--max-size 100000000"
+        ).format(
             prefetch=self.prefetch,
             ngc=self.ngc_file,
             cart=cart_file,
