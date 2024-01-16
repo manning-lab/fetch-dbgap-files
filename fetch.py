@@ -24,7 +24,7 @@ class dbGaPFileFetcher:
         self.prefetch = os.path.abspath(prefetch)
         self.output_dir = os.path.abspath(output_dir)
 
-    def download_files(self, cart, manifest, n_retries=3):
+    def download_files(self, cart, manifest, n_retries=3, untar=False):
         """Download files from dbGaP using a kart file. Because prefetch sometimes fails to download a file
         but does not report an error, this method will retry downloading the cart a number of times.
 
@@ -50,6 +50,8 @@ class dbGaPFileFetcher:
                     return False
                 all_files_downloaded = self._check_prefetch(temp_dir, manifest_files)
                 i = i + 1
+            if untar:
+                self.untar(temp_dir)
             # Copy files to the output directory
             os.chdir(original_working_directory)
             shutil.copytree(temp_dir, self.output_dir, dirs_exist_ok=True)
@@ -71,7 +73,7 @@ class dbGaPFileFetcher:
             "--ngc {ngc} "
             "--order kart "
             "--cart {cart} "
-            "--max-size 100000000"
+            "--max-size 500000000"
         ).format(
             prefetch=self.prefetch,
             ngc=self.ngc_file,
@@ -80,6 +82,7 @@ class dbGaPFileFetcher:
         if self.output_dir:
             cmd += " --output-directory {}".format(self.output_dir)
 
+        print(cmd)
         returned_value = subprocess.call(cmd, shell=True)
         return returned_value
 
@@ -88,6 +91,17 @@ class dbGaPFileFetcher:
         downloaded_files = os.listdir(directory)
         return set(downloaded_files) == set(expected_files)
 
+    def _untar(self, directory):
+        """Untar all tar files in the directory."""
+        message("Untarring files.")
+        tar_files = [f for f in os.listdir(directory) if f.endswith(".tar") or f.endswith(".tar.gz")]
+        for f in tar_files:
+            cmd = "tar --one-level-up -xvf {}".format(f)
+            print(cmd)
+            returned_value = subprocess.call(cmd, shell=True)
+            if returned_value != 0:
+                print("Failed to untar {}".format(f))
+                raise RuntimeError("Failed to untar {}".format(f))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -102,13 +116,14 @@ if __name__ == "__main__":
     # Optional arguments.
     parser.add_argument("--prefetch", help="The path to the prefetch executable.", default="prefetch")
     parser.add_argument("--verbose", help="Print more information.", action="store_true")
+    parser.add_argument("--untar", help="Untar the downloaded files.", action="store_true")
     # Parse.
     args = parser.parse_args()
 
     # Set up the class.
     fetcher = dbGaPFileFetcher(args.ngc, args.prefetch, args.outdir)
     # Download.
-    files_downloaded = fetcher.download_files(args.cart, args.manifest)
+    files_downloaded = fetcher.download_files(args.cart, args.manifest, untar=args.untar)
     if not files_downloaded:
         sys.exit(1)
     else:
