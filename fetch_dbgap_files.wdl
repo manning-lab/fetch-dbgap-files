@@ -8,22 +8,22 @@ workflow fetch_dbgap_files {
         String output_directory
     }
 
-  call download_files {
-    input:
-        cart_file=cart_file,
-        manifest_file=manifest_file,
-        ngc_file=ngc_file,
-        output_directory=output_directory
-  }
+    call download_files {
+        input:
+            cart_file=cart_file,
+            manifest_file=manifest_file,
+            ngc_file=ngc_file,
+            output_directory=output_directory
+    }
 
-  call copy_files {
-    input: output_directory=output_directory
-  }
+    call copy_files {
+        input: output_directory=output_directory
+    }
 
-  meta {
-    author: "Adrienne Stilp"
-    email: "amstilp@uw.edu"
-  }
+    meta {
+        author: "Adrienne Stilp"
+        email: "amstilp@uw.edu"
+    }
 
 }
 
