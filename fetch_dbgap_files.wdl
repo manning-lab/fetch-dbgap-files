@@ -6,7 +6,6 @@ workflow fetch_dbgap_files {
         File manifest_file
         File ngc_file
         String output_directory
-        Boolean untar = true
     }
 
   call download_files {
@@ -46,7 +45,7 @@ task download_files {
   }
   runtime {
     # Pull from DockerHub
-    docker: "uwgac/fetch-dbgap-files:0.0.9999.1"
+    docker: "uwgac/fetch-dbgap-files:0.0.999.1"
   }
 }
 
