@@ -1,5 +1,5 @@
 version: 1.2
 workflows:
     - name: fetch_dbgap_files
-      subclass: CWL
+      subclass: WDL
       primaryDescriptorPath: fetch_dbgap_files.wdl
