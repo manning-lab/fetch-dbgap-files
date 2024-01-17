@@ -116,7 +116,8 @@ if __name__ == "__main__":
     # Optional arguments.
     parser.add_argument("--prefetch", help="The path to the prefetch executable.", default="prefetch")
     parser.add_argument("--verbose", help="Print more information.", action="store_true")
-    parser.add_argument("--untar", help="Untar the downloaded files.", action="store_true")
+    parser.add_argument("--untar", help="Untar any tar archives into a directory with the same basename as the archive.", action="store_true")
+
     # Parse.
     args = parser.parse_args()
 
