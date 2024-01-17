@@ -93,10 +93,12 @@ class dbGaPFileFetcher:
 
     def _untar(self, directory):
         """Untar all tar files in the directory."""
-        message("Untarring files.")
+        print("Untarring files.")
         tar_files = [f for f in os.listdir(directory) if f.endswith(".tar") or f.endswith(".tar.gz")]
         for f in tar_files:
-            cmd = "tar -xvf {} -C {}".format(f, f.split(".tar")[0])
+            extract_directory = os.path.join(directory, f.split(".tar")[0])
+            os.mkdir(os.path.join(extract_directory))
+            cmd = "tar -xvf {} -C {}".format(f, extract_directory)
             print(cmd)
             returned_value = subprocess.call(cmd, shell=True)
             if returned_value != 0:
