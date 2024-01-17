@@ -51,7 +51,7 @@ class dbGaPFileFetcher:
                 all_files_downloaded = self._check_prefetch(temp_dir, manifest_files)
                 i = i + 1
             if untar:
-                self.untar(temp_dir)
+                self._untar(temp_dir)
             # Copy files to the output directory
             os.chdir(original_working_directory)
             shutil.copytree(temp_dir, self.output_dir, dirs_exist_ok=True)
@@ -96,7 +96,7 @@ class dbGaPFileFetcher:
         message("Untarring files.")
         tar_files = [f for f in os.listdir(directory) if f.endswith(".tar") or f.endswith(".tar.gz")]
         for f in tar_files:
-            cmd = "tar --one-level-up -xvf {}".format(f)
+            cmd = "tar -xvf {} -C {}".format(f, f.split(".tar")[0])
             print(cmd)
             returned_value = subprocess.call(cmd, shell=True)
             if returned_value != 0:
