@@ -57,4 +57,9 @@ task copy_files {
     command {
         gsutil_cp tmp_download/* ~{output_directory}
     }
+
+    runtime {
+        # Pull from DockerHub
+        docker: "us.gcr.io/broad-dsp-gcr-public/anvil-rstudio-bioconductor:3.18.0"
+    }
 }
