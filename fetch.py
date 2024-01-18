@@ -104,6 +104,8 @@ class dbGaPFileFetcher:
             if returned_value != 0:
                 print("Failed to untar {}".format(f))
                 raise RuntimeError("Failed to untar {}".format(f))
+            # Remove the tar archive.
+            os.remove(os.path.join(directory, f))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
