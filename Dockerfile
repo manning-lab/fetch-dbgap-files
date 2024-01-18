@@ -1,7 +1,6 @@
-FROM python:3.12
+FROM us.gcr.io/broad-dsp-gcr-public/anvil-rstudio-bioconductor:3.18.0
 
 ENV SRATOOLKIT_VERSION="3.0.0"
-ENV USER="sratoolkituser"
 
 # Check out repository files.
 RUN cd /usr/local && \
@@ -19,9 +18,7 @@ RUN cd /opt/ \
 # Add sratoolkit commands to the path.
 ENV PATH=/opt/sratoolkit.3.0.0-ubuntu64/bin:${PATH}
 # Create and set the SRA Toolkit user.
-RUN useradd -ms /bin/bash ${USER}
-RUN mkdir /home/${USER}/.ncbi
-RUN echo '/LIBS/GUID = "mock-uid"\nconfig/default = "true"' > /home/${USER}/.ncbi/user-settings.mkfg
-USER ${USER}
+RUN mkdir ~/.ncbi
+RUN echo '/LIBS/GUID = "mock-uid"\nconfig/default = "true"' > ~/.ncbi/user-settings.mkfg
 
 CMD /bin/sh

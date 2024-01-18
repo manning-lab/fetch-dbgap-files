@@ -8,16 +8,12 @@ workflow fetch_dbgap_files {
         String output_directory
     }
 
-    call download_files {
+    call fetch_files {
         input:
             cart_file=cart_file,
             manifest_file=manifest_file,
             ngc_file=ngc_file,
             output_directory=output_directory
-    }
-
-    call copy_files {
-        input: output_directory=output_directory
     }
 
     meta {
@@ -28,7 +24,7 @@ workflow fetch_dbgap_files {
 }
 
 
-task download_files {
+task fetch_files {
     input {
         File cart_file
         File manifest_file
@@ -42,24 +38,10 @@ task download_files {
             --manifest ~{manifest_file} \
             --outdir  tmp_download \
             --untar
+        gsutil_cp tmp_download/* ~{output_directory}
     }
     runtime {
         # Pull from DockerHub
         docker: "uwgac/fetch-dbgap-files:0.0.999.1"
-    }
-}
-
-task copy_files {
-    input {
-        String output_directory
-    }
-
-    command {
-        gsutil_cp tmp_download/* ~{output_directory}
-    }
-
-    runtime {
-        # Pull from DockerHub
-        docker: "us.gcr.io/broad-dsp-gcr-public/anvil-rstudio-bioconductor:3.18.0"
     }
 }
