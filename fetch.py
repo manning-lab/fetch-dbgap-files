@@ -41,11 +41,11 @@ class dbGaPFileFetcher:
             os.chdir(temp_dir)
             # Download the files
             all_files_downloaded = False
-            i = 0
+            i = 1
             while not all_files_downloaded:
-                print("Attempt {}/{} to download files.".format(i + 1, n_retries))
+                print("Attempt {}/{} to download files.".format(i, n_retries))
                 self._run_prefetch(cart_file)
-                if i < n_retries:
+                if i == n_retries:
                     print("Failed to download all files.")
                     return False
                 all_files_downloaded = self._check_prefetch(temp_dir, manifest_files)
