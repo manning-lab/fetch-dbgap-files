@@ -126,7 +126,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     print("Cart file: " + args.cart)
-    print("Cart file exists: " + os.path.exists(args.cart))
+    print("Cart file exists: " + str(os.path.exists(args.cart)))
 
 
     # Set up the class.
