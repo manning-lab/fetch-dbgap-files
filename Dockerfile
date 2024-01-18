@@ -1,6 +1,6 @@
 FROM us.gcr.io/broad-dsp-gcr-public/anvil-rstudio-bioconductor:3.18.0
 
-ENV SRATOOLKIT_VERSION="3.0.0"
+ENV SRATOOLKIT_VERSION="3.0.10"
 
 # Check out repository files.
 RUN cd /usr/local && \
