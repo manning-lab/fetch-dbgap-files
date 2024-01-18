@@ -38,7 +38,7 @@ task fetch_files {
             --manifest ~{manifest_file} \
             --outdir  tmp_download \
             --untar
-        gsutil_cp tmp_download/* ~{output_directory}
+        gsutil cp tmp_download/* ~{output_directory}
     }
     runtime {
         # Pull from DockerHub
