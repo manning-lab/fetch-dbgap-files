@@ -54,7 +54,7 @@ class dbGaPFileFetcher:
                 self._untar(temp_dir)
             # Copy files to the output directory
             os.chdir(original_working_directory)
-            shutil.copytree(temp_dir, self.output_dir, dirs_exist_ok=True)
+            shutil.copytree(temp_dir, self.output_dir, copy_function=shutil.move, dirs_exist_ok=True)
             return True
 
     def _read_manifest(self, manifest):
