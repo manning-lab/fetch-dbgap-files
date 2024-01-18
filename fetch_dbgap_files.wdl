@@ -34,7 +34,7 @@ task fetch_files {
     command {
         python3 /projects/primed/analysts/amstilp/devel/fetch-dbgap-files/fetch.py \
             --ngc /projects/primed/dbgap/prj_33119_D13875.ngc \
-            --cart ~{cart_file}
+            --cart ~{cart_file} \
             --manifest ~{manifest_file} \
             --outdir  tmp_download \
             --untar
