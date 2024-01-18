@@ -33,6 +33,7 @@ task fetch_files {
     }
     command {
         python3 /usr/local/fetch-dbgap-files/fetch.py \
+            --prefetch /opt/sratoolkit.3.0.0-ubuntu64/bin/prefetch \
             --ngc /projects/primed/dbgap/prj_33119_D13875.ngc \
             --cart ~{cart_file} \
             --manifest ~{manifest_file} \
