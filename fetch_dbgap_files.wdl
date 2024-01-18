@@ -32,7 +32,7 @@ task fetch_files {
         String output_directory
     }
     command {
-        python3 /projects/primed/analysts/amstilp/devel/fetch-dbgap-files/fetch.py \
+        python3 /usr/local/fetch-dbgap-files/fetch.py \
             --ngc /projects/primed/dbgap/prj_33119_D13875.ngc \
             --cart ~{cart_file} \
             --manifest ~{manifest_file} \
