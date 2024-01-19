@@ -35,10 +35,10 @@ task fetch_files {
         head ~{cart_file}
         python3 /usr/local/fetch-dbgap-files/fetch.py \
             --prefetch /opt/sratoolkit.3.0.10-ubuntu64/bin/prefetch \
-            --ngc /projects/primed/dbgap/prj_33119_D13875.ngc \
+            --ngc ~{ngc_file} \
             --cart ~{cart_file} \
             --manifest ~{manifest_file} \
-            --outdir  tmp_download \
+            --outdir tmp_download \
             --untar
         gsutil cp tmp_download/* ~{output_directory}
     }
