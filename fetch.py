@@ -125,10 +125,6 @@ if __name__ == "__main__":
     # Parse.
     args = parser.parse_args()
 
-    print("Cart file: " + args.cart)
-    print("Cart file exists: " + str(os.path.exists(args.cart)))
-
-
     # Set up the class.
     fetcher = dbGaPFileFetcher(args.ngc, args.prefetch, args.outdir)
     # Download.
