@@ -6,6 +6,7 @@ workflow fetch_dbgap_files {
         File manifest_file
         File ngc_file
         String output_directory
+        Int? disk_gb
     }
 
     call fetch_files {
@@ -13,7 +14,8 @@ workflow fetch_dbgap_files {
             cart_file=cart_file,
             manifest_file=manifest_file,
             ngc_file=ngc_file,
-            output_directory=output_directory
+            output_directory=output_directory,
+            disk_gb=disk_gb
     }
 
     meta {
@@ -30,6 +32,7 @@ task fetch_files {
         File manifest_file
         File ngc_file
         String output_directory
+        Int disk_gb = 50
     }
     command {
         head ~{cart_file}
@@ -45,5 +48,6 @@ task fetch_files {
     runtime {
         # Pull from DockerHub
         docker: "uwgac/fetch-dbgap-files:0.0.999.1"
+        disks: "local-disk ${disk_gb} SSD"
     }
 }
