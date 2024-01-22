@@ -41,7 +41,7 @@ Optional inputs:
 | `--prefetch`    | The path to the [SRAToolkit](https://github.com/ncbi/sra-tools) prefetch binary |
 | `--untar`    | Flag the can be set if the script should untar any `.tar` or `.tar.gz` files into a directory with the same name as the archive (without extension). If set, the original `.tar` or `.tar.gz` archive will be deleted. |
 
-The script will attempt to download the files and compare agianst the manfiest; if all files were not downloaded initially, it will retry 3 times. Once all files are successfully downloaded, it will copy the files to the final requested `outdir`.
+Because prefetch somestimes exits without error but without downloading all requested files, the script will attempt to download the files and compare agianst the manfiest; if all files were not downloaded initially, it will retry 3 times. Once all files are successfully downloaded, it will copy the files to the final requested `outdir`.
 
 Note that if the `fetch.py` script crashes for some reason, you will have to restart from the beginning.
 
