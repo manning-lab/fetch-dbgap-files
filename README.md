@@ -65,3 +65,9 @@ Optional inputs:
 | disk_gb | The hard disk size of the instance to use for downloading and untarring. If downloading a large volume of files, you may need to increase this value. (Default: 50)|
 
 The workflow can be found on [Dockstore](https://dockstore.org/workflows/github.com/UW-GAC/fetch-dbgap-files/fetch_dbgap_files_wdl:main?tab=info).
+
+### Caveats
+
+Note that the project key (`--ngc` or `ngc_file`) is sensitive; do not share it with people who are not covered by your dbGaP application as it will allow them to download data.
+We recommend that you do not put the project key file in a Terra/AnVIL workspace that you are planning to share with other people.
+Instead, store it in a more protected workspace that is only shared with people covered by the dbGaP application.
