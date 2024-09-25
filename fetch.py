@@ -100,12 +100,17 @@ class dbGaPFileFetcher:
         """Check that prefetch downloaded all the files in the manifest."""
         expected_files = self._read_manifest(manifest)
         downloaded_files = os.listdir(directory)
+        print("Found downloaded files:")
+        print(sorted(downloaded_files))
+        print("Expected {} files; found {} files.", len(expected_files), len(downloaded_files))
         return set(downloaded_files) == set(expected_files)
 
     def _check_prefetch_against_n_files(self, directory, n_files):
         """Check that prefetch downloaded the expected number of files."""
         downloaded_files = os.listdir(directory)
-        print(downloaded_files)
+        print("Found downloaded files:")
+        print(sorted(downloaded_files))
+        print("Expected {} files; found {} files.", n_files, len(downloaded_files))
         return len(downloaded_files) == n_files
 
     def _untar(self, directory):
