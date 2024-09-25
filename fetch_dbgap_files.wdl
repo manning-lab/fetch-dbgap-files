@@ -50,7 +50,7 @@ task fetch_files {
     }
     runtime {
         # Pull from DockerHub
-        docker: "uwgac/fetch-dbgap-files:0.2.0"
+        docker: "uwgac/fetch-dbgap-files:0.2.1"
         disks: "local-disk ${disk_gb} SSD"
     }
 }
