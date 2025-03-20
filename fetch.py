@@ -24,9 +24,7 @@ class dbGaPFileFetcher:
         self.prefetch = os.path.abspath(prefetch)
         self.output_dir = os.path.abspath(output_dir)
 
-    def download_files(
-        self, cart, manifest=None, n_files=None, n_retries=3, untar=False
-    ):
+    def download_files(self, cart, n_retries=3, untar=False):
         """Download files from dbGaP using a kart file. Because prefetch sometimes fails to download a file
         but does not report an error, this method will retry downloading the cart a number of times.
 
@@ -40,8 +38,10 @@ class dbGaPFileFetcher:
             n_files (int): The number of files that should be downloaded. If this is provided, the method will
                            check that this many files were downloaded.
         """
-        # Work in a temporary directory to do the downloading.
         cart_file = os.path.abspath(cart)
+        # Get the manifest from the cart file.
+        manifest = self._read_manifest_from_cart(cart_file)
+        # Work in a temporary directory to do the downloading.
         original_working_directory = os.getcwd()
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
@@ -54,17 +54,9 @@ class dbGaPFileFetcher:
                 if i == n_retries:
                     print("Failed to download all files.")
                     return False
-                if manifest:
-                    all_files_downloaded = self._check_prefetch_against_manifest(
-                        temp_dir, manifest
-                    )
-                elif n_files:
-                    all_files_downloaded = self._check_prefetch_against_n_files(
-                        temp_dir, n_files
-                    )
-                else:
-                    # If no manifest or n_files was provided, we have to assume that it worked.
-                    all_files_downloaded = True
+                all_files_downloaded = self._check_prefetch_against_manifest(
+                    temp_dir, manifest
+                )
                 i = i + 1
             if untar:
                 self._untar(temp_dir)
@@ -93,15 +85,6 @@ class dbGaPFileFetcher:
 
         return manifest
 
-    def _read_manifest(self, manifest):
-        """Read the manifest file."""
-        files = []
-        with open(manifest) as f:
-            cf = csv.DictReader(f)
-            for row in cf:
-                files.append(row["File Name"])
-        return files
-
     def _run_prefetch(self, cart_file):
         """Run the prefetch command to download files from dbGaP."""
         cmd = (
@@ -124,7 +107,7 @@ class dbGaPFileFetcher:
 
     def _check_prefetch_against_manifest(self, directory, manifest):
         """Check that prefetch downloaded all the files in the manifest."""
-        expected_files = self._read_manifest(manifest)
+        expected_files = manifest
         downloaded_files = os.listdir(directory)
         print("Found downloaded files:")
         print(sorted(downloaded_files))
@@ -134,14 +117,6 @@ class dbGaPFileFetcher:
             len(downloaded_files),
         )
         return set(downloaded_files) == set(expected_files)
-
-    def _check_prefetch_against_n_files(self, directory, n_files):
-        """Check that prefetch downloaded the expected number of files."""
-        downloaded_files = os.listdir(directory)
-        print("Found downloaded files:")
-        print(sorted(downloaded_files))
-        print("Expected {} files; found {} files.", n_files, len(downloaded_files))
-        return len(downloaded_files) == n_files
 
     def _untar(self, directory):
         """Untar all tar files in the directory."""
@@ -178,12 +153,6 @@ if __name__ == "__main__":
     parser.add_argument("--cart", help="The cart file to use.", required=True)
     parser.add_argument(
         "--outdir", help="The directory where files should be saved.", required=True
-    )
-    # Files for downloading.
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--manifest", help="The manifest file to use.", type=str)
-    group.add_argument(
-        "--n-files", help="The number of files expected to download.", type=int
     )
     # Optional arguments.
     parser.add_argument(
