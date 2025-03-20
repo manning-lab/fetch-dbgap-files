@@ -24,7 +24,9 @@ class dbGaPFileFetcher:
         self.prefetch = os.path.abspath(prefetch)
         self.output_dir = os.path.abspath(output_dir)
 
-    def download_files(self, cart, manifest=None, n_files=None, n_retries=3, untar=False):
+    def download_files(
+        self, cart, manifest=None, n_files=None, n_retries=3, untar=False
+    ):
         """Download files from dbGaP using a kart file. Because prefetch sometimes fails to download a file
         but does not report an error, this method will retry downloading the cart a number of times.
 
@@ -53,9 +55,13 @@ class dbGaPFileFetcher:
                     print("Failed to download all files.")
                     return False
                 if manifest:
-                    all_files_downloaded = self._check_prefetch_against_manifest(temp_dir, manifest)
+                    all_files_downloaded = self._check_prefetch_against_manifest(
+                        temp_dir, manifest
+                    )
                 elif n_files:
-                    all_files_downloaded = self._check_prefetch_against_n_files(temp_dir, n_files)
+                    all_files_downloaded = self._check_prefetch_against_n_files(
+                        temp_dir, n_files
+                    )
                 else:
                     # If no manifest or n_files was provided, we have to assume that it worked.
                     all_files_downloaded = True
@@ -64,7 +70,9 @@ class dbGaPFileFetcher:
                 self._untar(temp_dir)
             # Copy files to the output directory
             os.chdir(original_working_directory)
-            shutil.copytree(temp_dir, self.output_dir, copy_function=shutil.move, dirs_exist_ok=True)
+            shutil.copytree(
+                temp_dir, self.output_dir, copy_function=shutil.move, dirs_exist_ok=True
+            )
             return True
 
     def _read_manifest(self, manifest):
@@ -102,7 +110,11 @@ class dbGaPFileFetcher:
         downloaded_files = os.listdir(directory)
         print("Found downloaded files:")
         print(sorted(downloaded_files))
-        print("Expected {} files; found {} files.", len(expected_files), len(downloaded_files))
+        print(
+            "Expected {} files; found {} files.",
+            len(expected_files),
+            len(downloaded_files),
+        )
         return set(downloaded_files) == set(expected_files)
 
     def _check_prefetch_against_n_files(self, directory, n_files):
@@ -116,7 +128,11 @@ class dbGaPFileFetcher:
     def _untar(self, directory):
         """Untar all tar files in the directory."""
         print("Untarring files.")
-        tar_files = [f for f in os.listdir(directory) if f.endswith(".tar") or f.endswith(".tar.gz")]
+        tar_files = [
+            f
+            for f in os.listdir(directory)
+            if f.endswith(".tar") or f.endswith(".tar.gz")
+        ]
         for f in tar_files:
             extract_directory = os.path.join(directory, f.split(".tar")[0])
             os.mkdir(os.path.join(extract_directory))
@@ -129,23 +145,40 @@ class dbGaPFileFetcher:
             # Remove the tar archive.
             os.remove(os.path.join(directory, f))
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Fetches files from dbGaP using a kart file.",
         prog="fetch",
     )
     # Required arguments.
-    parser.add_argument("--ngc", help="The path to the ngc file containing the project key.", required=True)
+    parser.add_argument(
+        "--ngc",
+        help="The path to the ngc file containing the project key.",
+        required=True,
+    )
     parser.add_argument("--cart", help="The cart file to use.", required=True)
-    parser.add_argument("--outdir", help="The directory where files should be saved.", required=True)
+    parser.add_argument(
+        "--outdir", help="The directory where files should be saved.", required=True
+    )
     # Files for downloading.
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--manifest", help="The manifest file to use.", type=str)
-    group.add_argument("--n-files", help="The number of files expected to download.", type=int)
+    group.add_argument(
+        "--n-files", help="The number of files expected to download.", type=int
+    )
     # Optional arguments.
-    parser.add_argument("--prefetch", help="The path to the prefetch executable.", default="prefetch")
-    parser.add_argument("--verbose", help="Print more information.", action="store_true")
-    parser.add_argument("--untar", help="Untar any tar archives into a directory with the same basename as the archive.", action="store_true")
+    parser.add_argument(
+        "--prefetch", help="The path to the prefetch executable.", default="prefetch"
+    )
+    parser.add_argument(
+        "--verbose", help="Print more information.", action="store_true"
+    )
+    parser.add_argument(
+        "--untar",
+        help="Untar any tar archives into a directory with the same basename as the archive.",
+        action="store_true",
+    )
 
     # Parse.
     args = parser.parse_args()
@@ -153,7 +186,9 @@ if __name__ == "__main__":
     # Set up the class.
     fetcher = dbGaPFileFetcher(args.ngc, args.prefetch, args.outdir)
     # Download.
-    files_downloaded = fetcher.download_files(args.cart, manifest=args.manifest, n_files=args.n_files, untar=args.untar)
+    files_downloaded = fetcher.download_files(
+        args.cart, manifest=args.manifest, n_files=args.n_files, untar=args.untar
+    )
     if not files_downloaded:
         sys.exit(1)
     else:
