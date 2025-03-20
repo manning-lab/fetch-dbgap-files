@@ -30,8 +30,6 @@ task fetch_files {
         File ngc_file
         String output_directory
         Int disk_gb = 50
-        File? manifest_file
-        Int? n_files
     }
     command {
         python3 /usr/local/fetch-dbgap-files/fetch.py \
