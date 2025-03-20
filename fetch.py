@@ -75,6 +75,24 @@ class dbGaPFileFetcher:
             )
             return True
 
+    def _read_manifest_from_cart(self, cart_file):
+        """Run the prefetch command to get the list of files from the cart file."""
+        cmd = ("{prefetch} --cart {cart} --list > tmp.txt").format(
+            prefetch=self.prefetch,
+            cart=cart_file,
+        )
+
+        subprocess.call(cmd, shell=True)
+
+        with open("tmp.txt") as f:
+            out = f.readlines()
+        # Remove the first and last lines - these are headers and footers.
+        out = out[1 : (len(out) - 1)]
+        # Split on | and get the 4th element
+        manifest = [x.split("|")[3].strip() for x in out]
+
+        return manifest
+
     def _read_manifest(self, manifest):
         """Read the manifest file."""
         files = []
