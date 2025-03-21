@@ -173,9 +173,7 @@ if __name__ == "__main__":
     # Set up the class.
     fetcher = dbGaPFileFetcher(args.ngc, args.prefetch, args.outdir)
     # Download.
-    files_downloaded = fetcher.download_files(
-        args.cart, manifest=args.manifest, n_files=args.n_files, untar=args.untar
-    )
+    files_downloaded = fetcher.download_files(args.cart, untar=args.untar)
     if not files_downloaded:
         sys.exit(1)
     else:
