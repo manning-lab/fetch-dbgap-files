@@ -32,6 +32,8 @@ task fetch_files {
         Int disk_gb = 50
     }
     command {
+        set -e -o pipefail
+
         python3 /usr/local/fetch-dbgap-files/fetch.py \
             --prefetch /opt/sratoolkit.3.2.1-ubuntu64/bin/prefetch \
             --ngc ~{ngc_file} \
