@@ -7,7 +7,7 @@ Code to fetch dbGaP files using sra-toolkit.
 The `Dockerfile` can be used to build a docker image that can be used to run the `fetch.py` script.
 
 Alternatively, to run outside of the Docker image, you must install SRAToolkit.
-The code currently uses v3.0.10; it may work with other versions, but it is not guaranteed.
+The code currently uses v3.2.1; it may work with other versions, but it is not guaranteed.
 
 ## Preparation
 
