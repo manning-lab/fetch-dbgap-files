@@ -1,15 +1,15 @@
-FROM us.gcr.io/broad-dsp-gcr-public/anvil-rstudio-bioconductor:3.18.0
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:489.0.0-slim
 
 ENV SRATOOLKIT_VERSION="3.2.1"
 
 # Check out repository files.
 RUN cd /usr/local && \
-    git clone https://github.com/UW-GAC/fetch-dbgap-files.git
+    git clone https://github.com/manning-lab/fetch-dbgap-files.git
 
 # Install SRA Toolkit.
 RUN cd /opt/ \
     && \
-    wget \
+    curl -LO \
         https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/${SRATOOLKIT_VERSION}/sratoolkit.${SRATOOLKIT_VERSION}-ubuntu64.tar.gz \
     && \
     tar \
