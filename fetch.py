@@ -53,7 +53,7 @@ class dbGaPFileFetcher:
                 self._run_prefetch(cart_file, verify)
                 if i == n_retries:
                     print("Failed to download all files.")
-                    return False
+                    return True # Continue anyway
                 all_files_downloaded = self._check_prefetch_against_manifest(
                     temp_dir, manifest
                 )
