@@ -1,24 +1,27 @@
-FROM us.gcr.io/broad-dsp-gcr-public/anvil-rstudio-bioconductor:3.18.0
+# Latest gcloud SDK version where make is still included
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:532.0.0-slim
 
-ENV SRATOOLKIT_VERSION="3.2.1"
+# Install cmake, required to build sra-toolkit
+RUN \
+  apt update && \
+  apt install cmake -y && \
+  rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
 
-# Check out repository files.
-RUN cd /usr/local && \
-    git clone https://github.com/UW-GAC/fetch-dbgap-files.git
+# Build & install ncbi-vdb (dependency), then sra-toolkit.
+RUN \
+  git clone https://github.com/ncbi/sra-tools.git && \
+  git clone https://github.com/ncbi/ncbi-vdb.git  && \
+  cd    ncbi-vdb  && ./configure && make -j && \
+  cd ../sra-tools && ./configure && make -j # TODO: add a sed command to remove prefetch.c's file size checks
+ENV PATH="$PATH:~/ncbi-outdir/sra-tools/linux/gcc/x86_64/rel/bin"
 
-# Install SRA Toolkit.
-RUN cd /opt/ \
-    && \
-    wget \
-        https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/${SRATOOLKIT_VERSION}/sratoolkit.${SRATOOLKIT_VERSION}-ubuntu64.tar.gz \
-    && \
-    tar \
-        xvf \
-        sratoolkit.${SRATOOLKIT_VERSION}-ubuntu64.tar.gz
-# Add sratoolkit commands to the path.
-ENV PATH=/opt/sratoolkit.3.0.0-ubuntu64/bin:${PATH}
-# Create and set the SRA Toolkit user.
+# Create and set the sra-toolkit user.
 RUN mkdir ~/.ncbi
 RUN echo '/LIBS/GUID = "mock-uid"\nconfig/default = "true"' > ~/.ncbi/user-settings.mkfg
+
+# Get fetch.py
+RUN \
+  git clone https://github.com/manning-lab/fetch-dbgap-files.git && \
+  cp fetch-dbgap-files/fetch.py .
 
 CMD /bin/sh
