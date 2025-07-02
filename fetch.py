@@ -46,18 +46,7 @@ class dbGaPFileFetcher:
         with tempfile.TemporaryDirectory() as temp_dir:
             os.chdir(temp_dir)
             # Download the files
-            all_files_downloaded = False
-            i = 1
-            while not all_files_downloaded:
-                print("Attempt {}/{} to download files.".format(i, n_retries))
-                self._run_prefetch(cart_file, verify)
-                if i == n_retries:
-                    print("Failed to download all files.")
-                    return False
-                all_files_downloaded = self._check_prefetch_against_manifest(
-                    temp_dir, manifest
-                )
-                i = i + 1
+            self._run_prefetch(cart_file, verify)
             if untar:
                 self._untar(temp_dir)
             # Copy files to the output directory
